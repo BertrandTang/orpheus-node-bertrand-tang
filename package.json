@@ -9,5 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-generator": "^4.2.0"
   }
 }
