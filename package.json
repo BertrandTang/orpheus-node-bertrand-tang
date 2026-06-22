@@ -1,0 +1,13 @@
+{
+  "name": "orpheus-node",
+  "version": "1.0.0",
+  "description": "Project for students",
+  "license": "ISC",
+  "author": "Bertrand T.",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server"
+  }
+}
