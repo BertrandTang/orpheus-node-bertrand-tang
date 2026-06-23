@@ -20,8 +20,6 @@ prisma
   .$connect()
   .then(() => console.log("Database connected..."))
   .catch((err) => console.log(err));
-  
-app.set('prisma', prisma);
 
 app.use(express.json());
 app.use("/api", router);
