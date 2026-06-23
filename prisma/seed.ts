@@ -1,4 +1,5 @@
-import { prisma } from '../app.js'; 
+import { prisma } from '../app.js';
+import bcrypt from "bcrypt";
 import "dotenv/config";
 
 // Woods data
@@ -39,14 +40,17 @@ async function main() {
 
     // Seeding users
     for (const user of usersData) {
+
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+
         await prisma.user.upsert({
-            where: { email: user.email }, 
+            where: { email: user.email },
             update: {},
             create: {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                password: user.password,
+                password: hashedPassword,
             },
         });
     }

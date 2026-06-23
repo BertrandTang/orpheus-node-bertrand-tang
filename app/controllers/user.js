@@ -1,10 +1,18 @@
 import { prisma } from "../../app.js";
+import bcrypt from "bcrypt";
 
 export const signup = async (req, res) => {
     try {
         const response = req.body;
-        const newUser = await prisma.user.create({ data: response });
 
+        const hashedPassword = await bcrypt.hash(response.password, 10);
+
+        const newUser = await prisma.user.create({ 
+            data: {
+                ...response,
+                password: hashedPassword
+            } 
+        });
         // En cas de succès, renvoie l'objet utilisateur créé
         res.status(201).json(newUser);
     } catch (error) {
