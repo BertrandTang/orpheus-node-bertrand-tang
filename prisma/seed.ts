@@ -1,7 +1,5 @@
-import { PrismaClient } from '../app.js';
+import { prisma } from '../app.js'; 
 import "dotenv/config";
-
-const prisma = new PrismaClient();
 
 // Woods data
 const woodsData = [
@@ -20,14 +18,14 @@ const usersData = [
         firstName: "Naruto",
         lastName: "Uzumaki",
         email: "naruto.uzumaki@example.com",
-        password: "narutouzumaki@2026", 
+        password: "narutouzumaki@2026",
     }
 ];
 
 async function main() {
     console.log(`Début du seeding...`);
 
-    // Seeding des bois
+    // Seeding wood
     for (const wood of woodsData) {
         await prisma.wood.upsert({
             where: { name: wood.name },
@@ -41,10 +39,10 @@ async function main() {
     }
     console.log(`Essences de bois insérées.`);
 
-    // Seeding des utilisateurs
+    // Seeding users
     for (const user of usersData) {
         await prisma.user.upsert({
-            where: { email: user.email }, // On utilise l'email car il est @unique dans votre modèle
+            where: { email: user.email }, 
             update: {},
             create: {
                 firstName: user.firstName,
