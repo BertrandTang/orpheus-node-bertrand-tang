@@ -23,15 +23,15 @@ model User {
 }
 
 enum WoodType {
-  softwood
-  exotic_wood
-  noble_and_hardwoods
+  softwood            @map("softwood")
+  exotic_wood         @map("exotic wood")
+  noble_and_hardwoods @map("noble and hardwoods")
 }
 
 enum Hardness {
-  tender
-  medium_hard
-  hard
+  tender      @map("tender")
+  medium_hard @map("medium hard")
+  hard        @map("hard")
 }
 
 model Wood {
