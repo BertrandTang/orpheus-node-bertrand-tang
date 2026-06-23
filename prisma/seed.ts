@@ -23,7 +23,6 @@ const usersData = [
 ];
 
 async function main() {
-    console.log(`Début du seeding...`);
 
     // Seeding wood
     for (const wood of woodsData) {
@@ -37,7 +36,6 @@ async function main() {
             },
         });
     }
-    console.log(`Essences de bois insérées.`);
 
     // Seeding users
     for (const user of usersData) {
@@ -52,9 +50,6 @@ async function main() {
             },
         });
     }
-    console.log(`Utilisateurs insérés.`);
-
-    console.log(`Seeding terminé avec succès.`);
 }
 
 main()
