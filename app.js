@@ -21,6 +21,7 @@ prisma
   .then(() => console.log("Database connected..."))
   .catch((err) => console.log(err));
 
+app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 app.use("/api", router);
 
