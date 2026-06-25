@@ -17,7 +17,7 @@
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT",
-                "description": "Saisir directement le jeton JWT généré lors du login. Le mot 'Bearer' sera automatiquement ajouté dans l'en-tête HTTP 'Authorization'."
+                "description": "Saisir directement le jeton JWT généré lors du login."
             }
         },
         "schemas": {
@@ -69,7 +69,7 @@
                     "type": {
                         "type": "string",
                         "example": "softwood",
-                        "description": "Type de bois"
+                        "description": "Type ou catégorie de bois"
                     },
                     "hardness": {
                         "type": "string",
@@ -122,26 +122,35 @@
                                 "items": {
                                     "$ref": "#/components/schemas/HateoasLink"
                                 },
-                                "description": "Liens hypertextes dynamiques de navigation HATEOAS",
-                                "example": [
-                                    {
-                                        "rel": "self",
-                                        "method": "GET",
-                                        "href": "http://localhost:5000/api/woods/1"
-                                    },
-                                    {
-                                        "rel": "sameHardness",
-                                        "method": "POST",
-                                        "href": "http://localhost:5000/api/woods/hardness/tender"
-                                    }
-                                ]
+                                "description": "Liens hypertextes dynamiques de navigation HATEOAS"
                             }
                         },
                         "required": [
                             "links"
                         ]
                     }
-                ]
+                ],
+                "example": {
+                    "id": 1,
+                    "name": "Épicéa",
+                    "type": "softwood",
+                    "hardness": "tender",
+                    "image": "http://localhost:5000/uploads/epicea_17175824.jpg",
+                    "createdAt": "2026-06-04T10:00:00.000Z",
+                    "updatedAt": "2026-06-04T12:00:00.000Z",
+                    "links": [
+                        {
+                            "rel": "self",
+                            "method": "GET",
+                            "href": "http://localhost:5000/api/woods/1"
+                        },
+                        {
+                            "rel": "sameHardness",
+                            "method": "GET",
+                            "href": "http://localhost:5000/api/woods/hardness/tender"
+                        }
+                    ]
+                }
             },
             "ErrorResponse": {
                 "type": "object",
@@ -152,7 +161,7 @@
                     }
                 },
                 "required": [
-                    "message"
+                    "error"
                 ]
             }
         }
@@ -171,8 +180,7 @@
                         "required": true,
                         "description": "Jeton d'authentification JWT au format : Bearer <token>",
                         "schema": {
-                            "type": "string",
-                            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                            "type": "string"
                         }
                     }
                 ],
@@ -196,7 +204,7 @@
                         }
                     },
                     "401": {
-                        "description": "Accès refusé. Jeton JWT manquant, expiré ou corrompu dans l'en-tête Authorization",
+                        "description": "Accès refusé",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -208,7 +216,7 @@
                 }
             },
             "post": {
-                "summary": "Créer une essence de bois",
+                "summary": "Créer une nouvelle essence de bois",
                 "tags": [
                     "Woods"
                 ],
@@ -219,8 +227,7 @@
                         "required": true,
                         "description": "Jeton d'authentification JWT au format : Bearer <token>",
                         "schema": {
-                            "type": "string",
-                            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                            "type": "string"
                         }
                     }
                 ],
@@ -236,51 +243,31 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "name": {
+                                    "datas": {
                                         "type": "string",
-                                        "example": "Épicéa",
-                                        "description": "Nom de l'essence de bois"
-                                    },
-                                    "type": {
-                                        "type": "string",
-                                        "example": "softwwood",
-                                        "description": "Type de bois"
-                                    },
-                                    "hardness": {
-                                        "type": "string",
-                                        "enum": [
-                                            "tender",
-                                            "medium_hard",
-                                            "hard"
-                                        ],
-                                        "example": "tender",
-                                        "description": "Niveau de dureté du bois"
+                                        "description": "Chaîne JSON contenant les attributs du bois",
+                                        "default": "{\"name\":\"Épicéa\",\"type\":\"softwood\",\"hardness\":\"tender\"}"
                                     },
                                     "image": {
                                         "type": "string",
                                         "format": "binary",
-                                        "description": "Fichier image de l'essence de bois à téléverser"
+                                        "description": "Fichier image à téléverser"
                                     }
                                 },
                                 "required": [
-                                    "name",
-                                    "type",
-                                    "hardness"
+                                    "datas"
                                 ]
                             }
                         }
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Essence de bois créée avec succès",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/WoodWithHateoas"
-                                    }
+                                    "$ref": "#/components/schemas/WoodWithHateoas"
                                 }
                             }
                         }
@@ -296,7 +283,7 @@
                         }
                     },
                     "401": {
-                        "description": "Accès refusé. Jeton JWT manquant, expiré ou corrompu dans l'en-tête Authorization",
+                        "description": "Accès refusé",
                         "content": {
                             "application/json": {
                                 "schema": {
