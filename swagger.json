@@ -66,6 +66,11 @@
                         "example": "Épicéa",
                         "description": "Nom de l'essence de bois"
                     },
+                    "type": {
+                        "type": "string",
+                        "example": "softwood",
+                        "description": "Type de bois"
+                    },
                     "hardness": {
                         "type": "string",
                         "enum": [
@@ -97,6 +102,7 @@
                 "required": [
                     "id",
                     "name",
+                    "type",
                     "hardness",
                     "image",
                     "createdAt",
@@ -122,6 +128,11 @@
                                         "rel": "self",
                                         "method": "GET",
                                         "href": "http://localhost:5000/api/woods/1"
+                                    },
+                                    {
+                                        "rel": "sameHardness",
+                                        "method": "GET",
+                                        "href": "http://localhost:5000/api/woods/hardness/tender"
                                     }
                                 ]
                             }
@@ -158,7 +169,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "required": true,
-                        "description": "Jeton d'authentification JWT au format : Bearer <oken>",
+                        "description": "Jeton d'authentification JWT au format : Bearer <token>",
                         "schema": {
                             "type": "string",
                             "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -180,6 +191,106 @@
                                     "items": {
                                         "$ref": "#/components/schemas/WoodWithHateoas"
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Accès refusé. Jeton JWT manquant, expiré ou corrompu dans l'en-tête Authorization",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Créer une essence de bois",
+                "tags": [
+                    "Woods"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Jeton d'authentification JWT au format : Bearer <token>",
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Épicéa",
+                                        "description": "Nom de l'essence de bois"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "softwwood",
+                                        "description": "Type de bois"
+                                    },
+                                    "hardness": {
+                                        "type": "string",
+                                        "enum": [
+                                            "tender",
+                                            "medium_hard",
+                                            "hard"
+                                        ],
+                                        "example": "tender",
+                                        "description": "Niveau de dureté du bois"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Fichier image de l'essence de bois à téléverser"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "type",
+                                    "hardness"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Essence de bois créée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WoodWithHateoas"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Données requises manquantes ou invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
