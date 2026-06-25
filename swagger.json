@@ -131,7 +131,7 @@
                                     },
                                     {
                                         "rel": "sameHardness",
-                                        "method": "GET",
+                                        "method": "POST",
                                         "href": "http://localhost:5000/api/woods/hardness/tender"
                                     }
                                 ]
