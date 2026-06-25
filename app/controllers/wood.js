@@ -5,7 +5,6 @@ export const getAll = async (req, res) => {
         const woods = await prisma.wood.findMany();
         const baseUrl = `${req.protocol}://${req.get("host")}/api/woods`;
 
-        // Ajout des liens spécifiques (self et sameHardness) pour chaque bois
         const woodsWithLinks = woods.map((wood) => ({
             ...wood,
             links: [
@@ -30,7 +29,6 @@ export const readByHardness = async (req, res) => {
         });
         const baseUrl = `${req.protocol}://${req.get("host")}/api/woods`;
 
-        // Ajout des liens spécifiques pour chaque bois de cette collection
         const woodsWithLinks = woods.map((wood) => ({
             ...wood,
             links: [
