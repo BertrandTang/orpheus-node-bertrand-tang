@@ -17,7 +17,7 @@
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT",
-                "description": "Saisir directement le jeton JWT généré lors du login."
+                "description": "Saisir directement le jeton JWT généré lors du login. Le mot 'Bearer' sera automatiquement ajouté dans l'en-tête HTTP 'Authorization'."
             }
         },
         "schemas": {
@@ -161,7 +161,7 @@
                     }
                 },
                 "required": [
-                    "error"
+                    "message"
                 ]
             }
         }
@@ -180,7 +180,8 @@
                         "required": true,
                         "description": "Jeton d'authentification JWT au format : Bearer <token>",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                         }
                     }
                 ],
@@ -204,7 +205,7 @@
                         }
                     },
                     "401": {
-                        "description": "Accès refusé",
+                        "description": "Accès refusé. Jeton JWT manquant, expiré ou corrompu dans l'en-tête Authorization",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -216,7 +217,7 @@
                 }
             },
             "post": {
-                "summary": "Créer une nouvelle essence de bois",
+                "summary": "Créer une essence de bois",
                 "tags": [
                     "Woods"
                 ],
@@ -227,7 +228,8 @@
                         "required": true,
                         "description": "Jeton d'authentification JWT au format : Bearer <token>",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                         }
                     }
                 ],
@@ -262,7 +264,7 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Essence de bois créée avec succès",
                         "content": {
                             "application/json": {
@@ -272,18 +274,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Données requises manquantes ou invalides",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
                     "401": {
-                        "description": "Accès refusé",
+                        "description": "Accès refusé. Jeton JWT manquant, expiré ou corrompu dans l'en-tête Authorization",
                         "content": {
                             "application/json": {
                                 "schema": {
