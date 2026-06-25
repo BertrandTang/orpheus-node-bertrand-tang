@@ -1,19 +1,22 @@
 import { prisma } from "../../app.js";
 
+const formatWoodLinks = (wood, req) => {
+    const baseUrl = `${req.protocol}://${req.get("host")}/api/woods`;
+    return {
+        ...wood,
+        links: [
+            { rel: "self", method: "GET", href: `${baseUrl}/${wood.id}` },
+            { rel: "sameHardness", method: "GET", href: `${baseUrl}/hardness/${wood.hardness}` }
+        ]
+    };
+};
+
+const formatWoodsList = (woods, req) => woods.map((wood) => formatWoodLinks(wood, req));
+
 export const getAll = async (req, res) => {
     try {
         const woods = await prisma.wood.findMany();
-        const baseUrl = `${req.protocol}://${req.get("host")}/api/woods`;
-
-        const woodsWithLinks = woods.map((wood) => ({
-            ...wood,
-            links: [
-                { rel: "self", method: "GET", href: `${baseUrl}/${wood.id}` },
-                { rel: "sameHardness", method: "GET", href: `${baseUrl}/hardness/${wood.hardness}` }
-            ]
-        }));
-
-        res.status(200).json(woodsWithLinks);
+        res.status(200).json(formatWoodsList(woods, req));
     } catch (error) {
         res.status(500).json({
             error: error.message || "An error occurred while fetching the woods.",
@@ -27,17 +30,7 @@ export const readByHardness = async (req, res) => {
         const woods = await prisma.wood.findMany({
             where: { hardness: hardness },
         });
-        const baseUrl = `${req.protocol}://${req.get("host")}/api/woods`;
-
-        const woodsWithLinks = woods.map((wood) => ({
-            ...wood,
-            links: [
-                { rel: "self", method: "GET", href: `${baseUrl}/${wood.id}` },
-                { rel: "sameHardness", method: "GET", href: `${baseUrl}/hardness/${wood.hardness}` }
-            ]
-        }));
-
-        res.status(200).json(woodsWithLinks);
+        res.status(200).json(formatWoodsList(woods, req));
     } catch (error) {
         res.status(500).json({
             error: error.message || "An error occurred while fetching the woods.",
@@ -70,15 +63,7 @@ export const createWood = async (req, res) => {
             },
         });
 
-        const baseUrl = `${req.protocol}://${req.get("host")}/api/woods`;
-
-        res.status(201).json({
-            ...newWood,
-            links: [
-                { rel: "self", method: "GET", href: `${baseUrl}/${newWood.id}` },
-                { rel: "sameHardness", method: "GET", href: `${baseUrl}/hardness/${newWood.hardness}` }
-            ]
-        });
+        res.status(201).json(formatWoodLinks(newWood, req));
 
     } catch (error) {
         res.status(500).json({
