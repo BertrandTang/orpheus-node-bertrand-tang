@@ -1,5 +1,7 @@
 import { PrismaClient } from "./generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from "./swagger.json"
 import router from "./app/routes/index.js";
 import express from "express";
 import cors from "cors"; 
@@ -26,7 +28,8 @@ prisma
   .$connect()
   .then(() => console.log("Database connected..."))
   .catch((err) => console.log(err));
-
+  
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors(corsOptions)); 
 app.use('/uploads', express.static('uploads'));
 app.use(express.json());

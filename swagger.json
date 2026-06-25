@@ -1,0 +1,201 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de gestion du bois",
+        "version": "1.0.0",
+        "description": "Documentation de l'API Wood"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5000/api",
+            "description": "Serveur local"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Saisir directement le jeton JWT généré lors du login. Le mot 'Bearer' sera automatiquement ajouté dans l'en-tête HTTP 'Authorization'."
+            }
+        },
+        "schemas": {
+            "HateoasLink": {
+                "type": "object",
+                "properties": {
+                    "rel": {
+                        "type": "string",
+                        "enum": [
+                            "self",
+                            "sameHardness"
+                        ],
+                        "example": "self"
+                    },
+                    "method": {
+                        "type": "string",
+                        "enum": [
+                            "GET",
+                            "POST",
+                            "PUT",
+                            "DELETE"
+                        ],
+                        "example": "GET"
+                    },
+                    "href": {
+                        "type": "string",
+                        "example": "http://localhost:5000/api/woods/1"
+                    }
+                },
+                "required": [
+                    "rel",
+                    "method",
+                    "href"
+                ]
+            },
+            "Wood": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Identifiant unique généré par la base de données"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Épicéa",
+                        "description": "Nom de l'essence de bois"
+                    },
+                    "hardness": {
+                        "type": "string",
+                        "enum": [
+                            "tender",
+                            "medium_hard",
+                            "hard"
+                        ],
+                        "example": "tender",
+                        "description": "Niveau de dureté standardisé du bois"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "http://localhost:5000/uploads/epicea_17175824.jpg",
+                        "description": "URL absolue pointant vers l'image stockée sur le serveur"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-06-04T10:00:00.000Z",
+                        "description": "Date de création de la ressource"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-06-04T12:00:00.000Z",
+                        "description": "Date de la dernière mise à jour de la ressource"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "hardness",
+                    "image",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "WoodWithHateoas": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Wood"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/HateoasLink"
+                                },
+                                "description": "Liens hypertextes dynamiques de navigation HATEOAS",
+                                "example": [
+                                    {
+                                        "rel": "self",
+                                        "method": "GET",
+                                        "href": "http://localhost:5000/api/woods/1"
+                                    }
+                                ]
+                            }
+                        },
+                        "required": [
+                            "links"
+                        ]
+                    }
+                ]
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "example": "Missing token."
+                    }
+                },
+                "required": [
+                    "message"
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/woods": {
+            "get": {
+                "summary": "Récupérer toutes les essences de bois",
+                "tags": [
+                    "Woods"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Jeton d'authentification JWT au format : Bearer <oken>",
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Collection de bois récupérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WoodWithHateoas"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Accès refusé. Jeton JWT manquant, expiré ou corrompu dans l'en-tête Authorization",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
